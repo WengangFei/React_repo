@@ -14,15 +14,30 @@ import {
 import { Input } from "@/components/ui/input"
 import { SignUpValidation } from '@/lib/validation'
 import { TbSocial } from "react-icons/tb";
-import { useState} from 'react'
 import Loader from '@/components/shared/Loader'
-import { Link } from 'react-router-dom';
-import { createUserAccount } from '@/lib/appwrite/api'
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from "sonner";
+import { useCreateUserAccount, useSignInAccount } from '@/lib/react-query/queriesAndMutations'
+import { useUserContext } from '@/context/AuthContext'
+import { account } from '@/lib/appwrite/config'
+
+
 
 
 const SignupForm = () => {
   
+  const { mutateAsync: createUser, isPending:isCreatingUser } = useCreateUserAccount();
+  //useMutation({
+  //   mutationFn: (user:SignupUser) => createUserAccount(user),
+  // });  => { mutate(), mutateAsync(), isLoading, isError, data, error }
 
+  const { mutateAsync: signIn, isPending: isSigningIn } = useSignInAccount();
+
+  // user context
+  const { checkAuthUser, isLoading: isUserLoading, isAuthenticated } = useUserContext();
+
+  // navigation
+  const navigate = useNavigate();
   // 1. Define form instance
   const form = useForm<z.infer<typeof SignUpValidation>>({
     resolver: zodResolver(SignUpValidation),
@@ -36,12 +51,48 @@ const SignupForm = () => {
   })
 
   async function onSubmit(values: z.infer<typeof SignUpValidation>) {
-    
-    setLoader(true);
-    const newUser = await createUserAccount(values);
+    //appwrite api file function
+    const newUser = await createUser(values);
+    //if create user failed
+    if(!newUser) {
+      return toast.error('Account creation failed, please try it again!');
+    }
+    //user login to generates a session token
+    const session = await signIn({
+      email:values.email,
+      password:values.password
+    });
+    console.log('session =>',session);
+    if(!session) {
+      return toast.error('Sign in failed,please try again!')
+    }
+    //is authenticated, send an email to user;s email
+    if(isAuthenticated){
+      account.createVerification(import.meta.env.VITE_APPWRITE_EMAIL_VERIFICATION_URL).then((response) => {
+          console.log('Verification email sent to: ',response);
+          }).catch((error) => {
+          console.error('Error sending verification email:', error);
+          })
+
+      //check email verification
+      account.get().then((user) => {
+          console.log('User email is verified => ',user.emailVerification);
+      })
+    }
+
+    //check if user is authenticated
+    const isLoggedIn = await checkAuthUser();
+    if(isLoggedIn){
+      form.reset();
+      navigate('/');
+    }
+    else{
+      return toast.error('Signup failed, please try again!');
+    }
+
   }
 
-  const [loader, setLoader] = useState(false);
+  
   return (
     
     <div className="flex flex-center flex-col gap-6 border border-purple-500 rounded-[24px] p-8 md:p-14 min-w-80">
@@ -129,9 +180,9 @@ const SignupForm = () => {
             )}
           />
           <Button type="submit" className="shad-button_primary">
-            { loader ? <Loader content="Signing Up..."/> : "Sign Up" }
+            { isCreatingUser ? <Loader content="Signing Up..."/> : "Sign Up" }
           </Button>
-          <p className="text-xs">
+          <p className="text-xs text-center">
             Already have an account? 
             <Link to="/sign-in" className="text-purple-700 font-bold ml-2 cursor-pointer underline text-xs">
               Log in here

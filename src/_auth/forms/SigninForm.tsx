@@ -14,9 +14,13 @@ import {
 import { Input } from "@/components/ui/input"
 import { SignInValidation } from '@/lib/validation'
 import { TbSocial } from "react-icons/tb";
-import { useState} from 'react'
 import Loader from '@/components/shared/Loader'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSignInAccount } from '@/lib/react-query/queriesAndMutations'
+import { toast } from 'sonner'
+import { useUserContext } from '@/context/AuthContext'
+
+
 
 const SigninForm = () => {
   // 1. Define form instance
@@ -27,14 +31,30 @@ const SigninForm = () => {
         password: "",
       },
     })
-  
+  //handle sign in 
+  const { mutateAsync: signIn, isSuccess } = useSignInAccount();
+  //navigate
+  const { checkAuthUser } = useUserContext();
+  const navigate = useNavigate();
     async function onSubmit(values: z.infer<typeof SignInValidation>) {
-      setLoader(true);
       console.log(values);
-
+      const session = await signIn(values);
+      if(!session) {
+        return toast.error('Sign in failed,please try again!');
+      }
+      //check is logged in
+      const isLoggedIn = await checkAuthUser();
+      if(isLoggedIn){
+        form.reset();
+        navigate('/');
+      }else{
+        return toast.error('Sign in failed,please try again!');
+      }
     }
   
-    const [loader, setLoader] = useState(false);
+   
+
+
   return (
     <div className="flex flex-center flex-col gap-6 border border-purple-500 rounded-[24px] p-8 md:p-14 min-w-80">
 
@@ -44,7 +64,7 @@ const SigninForm = () => {
              <span className='text-purple-700 font-bold'>Inept coder</span>
           </div>
          
-          <h2>Sign In Your Account</h2>
+          <h2>Log In Your Account</h2>
       </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 flex flex-col w-full">
@@ -77,9 +97,9 @@ const SigninForm = () => {
             )}
           />
           <Button type="submit" className="shad-button_primary">
-            { loader ? <Loader content="Signing In..."/> : "Sign In" }
+            { isSuccess ? <Loader content="Signing In..."/> : "Sign In" }
           </Button>
-          <p className="text-xs">
+          <p className="text-xs text-center">
             Don't have an account? 
             <Link to="/sign-up" className="text-purple-700 font-bold ml-2 cursor-pointer underline text-xs">
               Sign Up here
