@@ -27,4 +27,16 @@ export const SignUpValidation = z.object({
     password: z.string().min(6, {
       message: "Password must be at least 6 characters.",
     }),
-  })
+  });
+
+  //post form schema
+  export const postFormSchema = z.object({
+    caption: z.string().min(5,{
+      message: "Caption must be at least 5 characters.",
+    }). max(2000),
+    file: z.custom<File[]>(),
+    location: z.string().min(2,{
+      message: "Location must be at least 2 characters.",
+    }).max(100),
+    tags: z.string(),
+  });

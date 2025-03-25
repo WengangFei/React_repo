@@ -1,4 +1,5 @@
 import React from "react";
+import { Models } from "appwrite";
 
 export type LoaderProps = {
     content: string,
@@ -28,4 +29,14 @@ export type IContextType = {
     setUser: React.Dispatch<React.SetStateAction<IUser>>;
     setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
     checkAuthUser: () => Promise<boolean>;
+}
+
+export type FileUploaderProps = {
+    fieldChange:(FILES:File[]) => void;
+    mediaUrl: string;
+}
+
+export type PostFormProps = {
+    post?: Models.Document,
+    
 }

@@ -1,7 +1,7 @@
 import AuthLayout from "./_auth/AuthLayout";
 import SigninForm from "./_auth/forms/SigninForm";
 import SignupForm from "./_auth/forms/SignupForm";
-import { Home, Explore, People, CreatePost, Saved } from "./_root/pages";
+import { Home, Explore, People, CreatePost, Saved, PostDetails, Profile, UpdateProfile, EditPost } from "./_root/pages";
 import RootLayout from "./_root/RootLayout";
 import Chef from "./components/chef/Chef"
 import MyCV from "./components/CV/MyCV"
@@ -36,6 +36,10 @@ function App() {
             <Route path="/people"  element={<People />} />
             <Route path="/create_post" element={<CreatePost /> } />
             <Route path="/saved" element={<Saved /> } />
+            <Route path="/update_post:id" element={<EditPost /> } />
+            <Route path='/posts:id' element={<PostDetails />} />
+            <Route path='/profile:id/*' element={<Profile />} />
+            <Route path='/update_profile:id' element={<UpdateProfile />} />
           </Route>
         </Routes> 
         

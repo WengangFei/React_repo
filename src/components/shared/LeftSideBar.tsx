@@ -121,7 +121,7 @@ const LeftSideBar = () => {
                     </NavLink>
                 </div>
             </div>
-            <Button variant='ghost' className="mr-auto" onClick={handleSignOut}>
+            <Button variant='ghost' className="mr-auto fixed bottom-16" onClick={handleSignOut}>
                 <RiLogoutBoxRLine className='text-purple-700 scale-[1.5] ml-[-12px]' />
                 <span className='ml-6 font-bold text-xs'>Logout</span>
             </Button>
