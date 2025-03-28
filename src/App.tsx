@@ -36,10 +36,10 @@ function App() {
             <Route path="/people"  element={<People />} />
             <Route path="/create_post" element={<CreatePost /> } />
             <Route path="/saved" element={<Saved /> } />
-            <Route path="/update_post:id" element={<EditPost /> } />
-            <Route path='/posts:id' element={<PostDetails />} />
-            <Route path='/profile:id/*' element={<Profile />} />
-            <Route path='/update_profile:id' element={<UpdateProfile />} />
+            <Route path="/update_post/:id" element={<EditPost /> } />
+            <Route path='/post/:id' element={<PostDetails />} />
+            <Route path='/profile/:id/*' element={<Profile />} />
+            <Route path='/update_profile/:id' element={<UpdateProfile />} />
           </Route>
         </Routes> 
         

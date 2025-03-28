@@ -17,6 +17,11 @@ import { postFormSchema } from "@/lib/validation"
 import { Textarea } from "@/components/ui/textarea"
 import FileUploader from "../shared/FileUploader"
 import { PostFormProps } from "../shared/types"
+import { useCreatePost } from "@/lib/react-query/queriesAndMutations"
+import { useUserContext } from "@/context/AuthContext"
+import { toast } from "sonner"
+import { useNavigate } from "react-router-dom"
+import Loader from "../shared/Loader"
 
 
 
@@ -34,11 +39,24 @@ const PostForm = ({ post }: PostFormProps) => {
     },
   })
 
+  //write post into db
+  const { mutateAsync: createPost, isPending } = useCreatePost();
+  //get user infor
+  const { user } = useUserContext();
+
+  //navigate instance
+  const navigate = useNavigate();
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof postFormSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof postFormSchema>) {
+    const newPost = await createPost({
+      ...values,
+      user: user.id,
+    });
+    if(!newPost) {
+      return toast.error('Post creation failed, please try it again!');
+    }
+    //redirect to home after post created successfully
+    navigate('/');
   }
 
   return (
@@ -67,7 +85,7 @@ const PostForm = ({ post }: PostFormProps) => {
             <FormItem>
               <FormLabel>Add photos</FormLabel>
               <FormControl>
-                <FileUploader fieldChange={field.onChange} mediaUrl={ post?.imageUrl} />
+                <FileUploader {...field} />
               </FormControl>
               <FormMessage className="shad-form_message"/>
             </FormItem>
@@ -101,7 +119,9 @@ const PostForm = ({ post }: PostFormProps) => {
         />
         <div className="flex gap-4 items-center justify-end">
             <Button type="button" className="shad-button_dark_4">Cancel</Button>
-            <Button type="submit" className="shad-button_primary whitespace-nowrap">Submit</Button>
+            <Button type="submit" className="shad-button_primary whitespace-nowrap">
+              { !isPending ? 'Submit' :<Loader content="Creating Post......" /> }
+            </Button>
         </div>
         
       </form>

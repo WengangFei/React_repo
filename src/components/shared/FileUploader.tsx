@@ -2,10 +2,10 @@ import { useCallback, useState  } from 'react';
 import { useDropzone, FileWithPath } from 'react-dropzone';
 import { IoImagesOutline } from "react-icons/io5";
 import { Button } from '../ui/button';
-import { FileUploaderProps } from './types';
+// import { FileUploaderProps } from './types';
 
 
-const FileUploader = ({ fieldChange }:FileUploaderProps) => {
+const FileUploader = ({ onChange }:{onChange:(FILES:File[]) => void}) => {
 
     const [fileUrl, setFileUrl] = useState('');
     
@@ -15,8 +15,8 @@ const FileUploader = ({ fieldChange }:FileUploaderProps) => {
         //create a temporary image url to display
         setFileUrl(URL.createObjectURL(acceptedFiles[0]));
         // send the file object to the parent component;
-        fieldChange(acceptedFiles);
-    },[fieldChange]);
+        onChange(acceptedFiles);
+    },[onChange]);
     //use dropzone，manages the drag-and-drop functionality for file uploads
     const { getRootProps, getInputProps } = useDropzone({ 
         onDrop,

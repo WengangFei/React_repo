@@ -40,3 +40,11 @@ export type PostFormProps = {
     post?: Models.Document,
     
 }
+
+export type INewPost = {
+    user: string;
+    caption: string;
+    file: File[];
+    location?: string;
+    tags?: string;
+  };
