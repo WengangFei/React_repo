@@ -10,7 +10,7 @@ const CreatePost = () => {
           <RiImageAddFill className='cursor-pointer size-6 hover:text-purple-500'/>
           <span className='font-bold w-full'>Create a post</span>
         </div>
-        <PostForm />
+        <PostForm action='create'/>
       </div>
     
     </div>

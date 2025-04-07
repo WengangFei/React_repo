@@ -5,8 +5,7 @@ import { CiSaveUp2 } from "react-icons/ci";
 import { useEffect, useState } from 'react';
 import { useDeleteSavedPost, useGetCurrentUser, useLikedPost, useSavePost } from '@/lib/react-query/queriesAndMutations';
 import { BsSaveFill } from "react-icons/bs";
-import Loader from './Loader';
-import { set } from 'zod';
+
 
 
 
@@ -14,7 +13,7 @@ const PostStats = ({ post, userId }:{ post:Models.Document, userId:string}) => {
   
     const { data: currentUser } = useGetCurrentUser();
     //get saved post
-    const savedPost = currentUser?.save.find((record:Models.Document) => record.post.$id === post.$id);
+    const savedPost = currentUser?.save.find((record:Models.Document) => record.post?.$id === post?.$id);
     //set saved
     useEffect(() => {
       setIsSaved(!!savedPost);
@@ -25,10 +24,9 @@ const PostStats = ({ post, userId }:{ post:Models.Document, userId:string}) => {
     const [isSaved, setIsSaved] = useState(false);
     //save liked into database
     const { mutateAsync: toggleLikePost } = useLikedPost();
-    const { mutateAsync: savePost, isPending: savePending } = useSavePost();
-    const { mutateAsync: deleteSavedPost, isPending: deletePending } = useDeleteSavedPost();
+    const { mutateAsync: savePost } = useSavePost();
+    const { mutateAsync: deleteSavedPost } = useDeleteSavedPost();
     
-  console.log(1)
     //liked post
     const handleLikePost = (e:React.MouseEvent) => {
       e.stopPropagation();
@@ -60,9 +58,9 @@ const PostStats = ({ post, userId }:{ post:Models.Document, userId:string}) => {
             <button onClick={handleLikePost} className='relative flex gap-2 mt-2 group'>
             {
                 likes.includes(userId) ? (
-                    <FaFaceKissWinkHeart className='text-purple-500 hover:text-light-1 cursor-pointer'onClick={()=>{}}/>    
+                    <FaFaceKissWinkHeart className='text-purple-500 hover:text-light-1 cursor-pointer'/>    
                 ) : (
-                    <FaRegKissWinkHeart className='text-purple-500 hover:text-light-1 cursor-pointer'onClick={()=>{}}/>
+                    <FaRegKissWinkHeart className='text-purple-500 hover:text-light-1 cursor-pointer'/>
                 )
             }
              <span className="absolute -top-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -73,8 +71,7 @@ const PostStats = ({ post, userId }:{ post:Models.Document, userId:string}) => {
         </div>
         <button className='relative flex gap-2 mt-2 group' onClick={handleSavePost}>
         {
-            savePending || deletePending ? <Loader content=''/> :
-            ( isSaved ) ? (
+            isSaved ? (
                 <BsSaveFill className='text-purple-500 hover:text-light-1 cursor-pointer' />
             ) : (
                 <CiSaveUp2 className='text-purple-500 hover:text-light-1 cursor-pointer' />

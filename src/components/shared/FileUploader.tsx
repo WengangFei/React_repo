@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 // import { FileUploaderProps } from './types';
 
 
-const FileUploader = ({ onChange }:{onChange:(FILES:File[]) => void}) => {
+const FileUploader = ({ onChange, mediaUrl }:{onChange:(FILES:File[]) => void, mediaUrl: string}) => {
 
     const [fileUrl, setFileUrl] = useState('');
     
@@ -46,8 +46,8 @@ const FileUploader = ({ onChange }:{onChange:(FILES:File[]) => void}) => {
                 </>
                 
             ):(
-                <div className='file_uploader-box'>
-                    <IoImagesOutline size={150}/>
+                <div className='file_uploader-box '>
+                    { mediaUrl ? <img src={mediaUrl} alt="Preview" className='rounded-xl h-40'/> : <IoImagesOutline size={150}/> }
                     <h3 className='base-medium text-light-2 mb-2 mt-6'>Drag photo here</h3>
                     <p className='text-light-4 small-regular mb-6'>SVG, PNG, JPG</p>
                     <Button className='shad-button_dark_4'>Select From Computer</Button>

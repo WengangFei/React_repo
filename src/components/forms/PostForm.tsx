@@ -17,7 +17,7 @@ import { postFormSchema } from "@/lib/validation"
 import { Textarea } from "@/components/ui/textarea"
 import FileUploader from "../shared/FileUploader"
 import { PostFormProps } from "../shared/types"
-import { useCreatePost } from "@/lib/react-query/queriesAndMutations"
+import { useCreatePost, useUpdatePost } from "@/lib/react-query/queriesAndMutations"
 import { useUserContext } from "@/context/AuthContext"
 import { toast } from "sonner"
 import { useNavigate } from "react-router-dom"
@@ -27,7 +27,7 @@ import Loader from "../shared/Loader"
 
 
 
-const PostForm = ({ post }: PostFormProps) => {
+const PostForm = ({ post, actions }: PostFormProps) => {
     // 1. Define your form.
   const form = useForm<z.infer<typeof postFormSchema>>({
     resolver: zodResolver(postFormSchema),
@@ -41,6 +41,8 @@ const PostForm = ({ post }: PostFormProps) => {
 
   //write post into db
   const { mutateAsync: createPost, isPending } = useCreatePost();
+  //update post into db
+  const { mutateAsync: updatePost, isPending: isUpdatePending } = useUpdatePost();
   //get user infor
   const { user } = useUserContext();
 
@@ -48,6 +50,21 @@ const PostForm = ({ post }: PostFormProps) => {
   const navigate = useNavigate();
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof postFormSchema>) {
+    //update post
+    if(post && actions === 'update') {
+      const updatedPost = await updatePost({
+        ...values,
+        postId: post.$id,
+        imageId: post?.imageId,
+        imageUrl: post?.imageUrl
+      });
+      if(!updatedPost) {
+        return toast.error('Post update failed, please try it again!');
+      }
+      //redirect to home after post created successfully
+      return navigate(`/post/${updatedPost.$id}`);
+    }
+    //create a post
     const newPost = await createPost({
       ...values,
       user: user.id,
@@ -85,7 +102,7 @@ const PostForm = ({ post }: PostFormProps) => {
             <FormItem>
               <FormLabel>Add photos</FormLabel>
               <FormControl>
-                <FileUploader {...field} />
+                <FileUploader {...field } mediaUrl={ post?.imageUrl } />
               </FormControl>
               <FormMessage className="shad-form_message"/>
             </FormItem>
@@ -119,8 +136,14 @@ const PostForm = ({ post }: PostFormProps) => {
         />
         <div className="flex gap-4 items-center justify-end">
             <Button type="button" className="shad-button_dark_4">Cancel</Button>
-            <Button type="submit" className="shad-button_primary whitespace-nowrap">
-              { !isPending ? 'Submit' :<Loader content="Creating Post......" /> }
+            <Button type="submit" className="shad-button_primary whitespace-nowrap" disabled={isPending || isUpdatePending}>
+              {
+                isPending || isUpdatePending ? (
+                  <Loader content="Loading..."/>
+                ) : (
+                  actions === 'create' ? 'Post' : 'Update'
+                )
+              }
             </Button>
         </div>
         
