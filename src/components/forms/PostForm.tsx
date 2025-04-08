@@ -64,7 +64,7 @@ const PostForm = ({ post, actions }: PostFormProps) => {
       //redirect to home after post created successfully
       return navigate(`/post/${updatedPost.$id}`);
     }
-    //create a post
+    //create a new post
     const newPost = await createPost({
       ...values,
       user: user.id,

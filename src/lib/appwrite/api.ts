@@ -333,3 +333,38 @@ export async function deletePost(postId: string, imageId: string) {
     console.log(error);
   }
 }
+//paginating posts
+export async function getInfinitePosts({ pageParam }:{ pageParam: number }) {
+  const queries : any[] = [Query.orderDesc("$createdAt"),Query.limit(20)];
+  if(pageParam){
+    queries.push(Query.cursorAfter(pageParam.toString()));
+  }
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.postsCollectionId,
+      queries
+    );
+    if (!posts) throw Error ("Error getting recent posts");
+    return posts;
+  } catch (error) {
+    console.log(error);
+  }
+}
+//search posts
+export async function searchPosts(searchTerm: string) {
+
+
+  try{
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.postsCollectionId,
+      [Query.search("caption", searchTerm)]
+    );
+    if (!posts) throw Error ("Error getting recent posts");
+    console.log('searchPosts =>',posts);
+    return posts;  
+  }catch(error){
+    console.log(error);
+  }
+}

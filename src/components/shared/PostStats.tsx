@@ -9,7 +9,7 @@ import { BsSaveFill } from "react-icons/bs";
 
 
 
-const PostStats = ({ post, userId }:{ post:Models.Document, userId:string}) => {
+const PostStats = ({ post, userId }:{ post?:Models.Document, userId:string}) => {
   
     const { data: currentUser } = useGetCurrentUser();
     //get saved post
@@ -19,7 +19,7 @@ const PostStats = ({ post, userId }:{ post:Models.Document, userId:string}) => {
       setIsSaved(!!savedPost);
     },[savedPost]);
     //get current likes array
-    const likesArray = post.likes.map((user:Models.Document) => user.$id);
+    const likesArray = post?.likes.map((user:Models.Document) => user.$id);
     const [likes, setLikes] = useState(likesArray);
     const [isSaved, setIsSaved] = useState(false);
     //save liked into database
@@ -37,7 +37,7 @@ const PostStats = ({ post, userId }:{ post:Models.Document, userId:string}) => {
         newLikesArray.push(userId);
       } 
       setLikes(newLikesArray);
-      toggleLikePost({ documentId: post.$id, likesArray: newLikesArray });
+      toggleLikePost({ documentId: post?.$id || '', likesArray: newLikesArray });
     };
     //saved post
     const handleSavePost = (e:React.MouseEvent) => {
@@ -48,7 +48,7 @@ const PostStats = ({ post, userId }:{ post:Models.Document, userId:string}) => {
             deleteSavedPost(savedPost.$id);
         }else{
             setIsSaved(true);
-            savePost({ documentId:post.$id, userId });  
+            savePost({ documentId:post?.$id || '', userId });  
         }
     };
 
