@@ -15,29 +15,26 @@ import { Input } from "@/components/ui/input"
 import { SignUpValidation } from '@/lib/validation'
 import { TbSocial } from "react-icons/tb";
 import Loader from '@/components/shared/Loader'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { toast } from "sonner";
-import { useCreateUserAccount, useSignInAccount } from '@/lib/react-query/queriesAndMutations'
-import { useUserContext } from '@/context/AuthContext'
+import { useCreateUserAccount, useSignInAccount, useSignOutAccount } from '@/lib/react-query/queriesAndMutations'
 import { account } from '@/lib/appwrite/config'
 
 
 
 
 const SignupForm = () => {
-  
+  //use sign out right after user created a account
+  const { mutateAsync: signOut, isSuccess } = useSignOutAccount();
+
   const { mutateAsync: createUser, isPending:isCreatingUser } = useCreateUserAccount();
   //useMutation({
   //   mutationFn: (user:SignupUser) => createUserAccount(user),
   // });  => { mutate(), mutateAsync(), isLoading, isError, data, error }
 
-  const { mutateAsync: signIn, isPending: isSigningIn } = useSignInAccount();
+  const { mutateAsync: signIn } = useSignInAccount();
 
-  // user context
-  const { checkAuthUser, isLoading: isUserLoading, isAuthenticated } = useUserContext();
 
-  // navigation
-  const navigate = useNavigate();
   // 1. Define form instance
   const form = useForm<z.infer<typeof SignUpValidation>>({
     resolver: zodResolver(SignUpValidation),
@@ -57,7 +54,11 @@ const SignupForm = () => {
     if(!newUser) {
       return toast.error('Account creation failed, please try it again!');
     }
-    //user login to generates a session token
+
+
+
+    //user login to generates a session token to send email verification
+    //appwrite won't let guest send email verification which is has to login first to create a session token
     const session = await signIn({
       email:values.email,
       password:values.password
@@ -66,35 +67,36 @@ const SignupForm = () => {
     if(!session) {
       return toast.error('Sign in failed,please try again!')
     }
-    //is authenticated, send an email to user;s email
-    if(isAuthenticated){
-      account.createVerification(import.meta.env.VITE_APPWRITE_EMAIL_VERIFICATION_URL).then((response) => {
-          console.log('Verification email sent to: ',response);
-          }).catch((error) => {
-          console.error('Error sending verification email:', error);
-          })
 
-      //check email verification
-      account.get().then((user) => {
-          console.log('User email is verified => ',user.emailVerification);
-      })
-    }
 
-    //check if user is authenticated
-    const isLoggedIn = await checkAuthUser();
-    if(isLoggedIn){
-      form.reset();
-      navigate('/');
-    }
-    else{
-      return toast.error('Signup failed, please try again!');
-    }
+    //is authenticated, send an email to user's email
+    account.createVerification(import.meta.env.VITE_APPWRITE_EMAIL_VERIFICATION_URL).then((response) => {
+        console.log('Verification email sent to: ',response);
+        }).catch((error) => {
+        console.error('Error sending verification email:', error);
+    });
 
+
+
+    form.reset();
+    //sign user out for verify registered email
+    await signOut();
+    toast.success('Account created successfully! Please check your email to verify your account before logging in.',{
+      duration:50000,
+      position:'bottom-center',
+      style: {
+        background: '#fff',
+        color: 'green',
+        padding: '10px',
+        borderRadius: '4px',
+        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+      },
+        
+      });
   }
 
   
   return (
-    
     <div className="flex flex-center flex-col gap-6 border border-purple-500 rounded-[24px] p-8 md:p-14 min-w-80">
 
       <div className="flex flex-center flex-col gap-2">

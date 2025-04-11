@@ -27,10 +27,11 @@ const AuthProvider = ({ children }:{ children: React.ReactNode }) => {
     const [user,setUser] = useState<IUser>(INITIAL_USER);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
+
     const checkAuthUser = async () => { 
         try{
             const currentAccount = await getCurrentUser();
+            console.log('currentAccount =>',currentAccount);
             if(currentAccount){
                 setUser({
                     id:currentAccount.$id,
@@ -45,19 +46,19 @@ const AuthProvider = ({ children }:{ children: React.ReactNode }) => {
             }
             return false;
         }catch(error){
-            console.log(error);
+            console.log('checkAuthUser error =>',error);
         }finally {
             setIsLoading(false);
         }
     };
     //if user not authenticated
-     useEffect(() => {
-        if(
-            localStorage.getItem('cookieFallback') === '[]' ||
-            localStorage.getItem('cookieFallback') === null
-        ) navigate('/sign-in');
-        checkAuthUser();
-     },[]);
+    //  useEffect(() => {
+    //     if(
+    //         localStorage.getItem('cookieFallback') === '[]' ||
+    //         localStorage.getItem('cookieFallback') === null
+    //     ) navigate('/sign-in');
+    //     checkAuthUser();
+    //  },[]);
 
     const value = {user,isLoading,isAuthenticated,setUser,setIsAuthenticated,checkAuthUser}
 

@@ -1,17 +1,14 @@
-import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { TbSocial } from "react-icons/tb";
+import { useLocation } from 'react-router-dom';
 import { IoHomeOutline } from "react-icons/io5";
 import { MdOutlineTravelExplore } from "react-icons/md";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { BsFilePost } from "react-icons/bs";
 import { FaSave } from "react-icons/fa";
-import { useUserContext } from '@/context/AuthContext';
 import { NavLink } from 'react-router-dom';
 import classNames from 'classnames';
-import { useSignOutAccount } from '@/lib/react-query/queriesAndMutations';
-import { useEffect } from 'react';
-import { Button } from '../ui/button';
-import { RiLogoutBoxRLine } from 'react-icons/ri';
+import { useUserContext } from '@/context/AuthContext';
+import { useEffect, useState } from 'react';
+
 
 const BottomBar = () => {
 
@@ -24,10 +21,28 @@ const BottomBar = () => {
     // check if link active
     const isActiveLink = ({ isActive }:{ isActive: boolean }) =>
         classNames('text-gray-500', {
-        'font-bold bg-purple-500 text-white rounded-md px-6 py-1': isActive,
-        'hover:text-purple-500 hover:bg-white font-bold rounded-md px-4 py-1': !isActive,
-    })       
-        
+        'font-bold bg-purple-500 text-white rounded-md px-2 py-1': isActive,
+        'hover:text-purple-500 hover:bg-white font-bold rounded-md px-1 ml-1': !isActive,
+    })    
+
+    const { checkAuthUser } = useUserContext();
+    const [userLogin,setUserLogin] = useState(false);
+    //redirect to login page
+    useEffect(()=>{
+        (async () =>{
+            if(await checkAuthUser()){
+               setUserLogin(true);
+            }
+        })();
+    },[]);
+
+    //can not call hook in conditionally logic, move them out
+    const exploreIconColor = useIconActiveColor('/explore');
+    const peopleIconColor = useIconActiveColor('/people');
+    const createPostIconColor = useIconActiveColor('/create_post');
+    const savedIconColor = useIconActiveColor('/saved');
+            
+                
   return (
     <section className='bottom-bar'>
         {/* links */}
@@ -37,30 +52,35 @@ const BottomBar = () => {
             className={ isActiveLink }>
                 <IoHomeOutline className={ useIconActiveColor('/') }/>
             </NavLink>
-
-            <NavLink to='/explore' 
-            // className={ () =>isActiveLink(pathname, '/profile') }>
-            className={ isActiveLink }>
-                <MdOutlineTravelExplore className={ useIconActiveColor('/explore') }/>
-            </NavLink>
-            <NavLink to='/people' 
-            // className={ () =>isActiveLink(pathname, '/profile') }>
-            className={ isActiveLink }>
-                <FaPeopleGroup className={ useIconActiveColor('/people') }/>
-            </NavLink>
-                
-            <NavLink to='/create_post' 
-            // className={ () =>isActiveLink(pathname, '/profile') }>
-            className={ isActiveLink }>
-                    <BsFilePost className={ useIconActiveColor('/create_post') }/>
-            </NavLink>
-
-            <NavLink to='/saved' 
-            // className={ () =>isActiveLink(pathname, '/profile') }>
-            className={ isActiveLink }>
-                <FaSave className={ useIconActiveColor('/saved') }/>
-            </NavLink>
-            
+            {
+                userLogin &&
+                (<>
+                    <div className='flex items-center group'>
+                      <MdOutlineTravelExplore className={exploreIconColor} />
+                      <NavLink to='/explore' className={isActiveLink}>
+                        <span className='text-xs'>Explore</span>
+                      </NavLink>
+                    </div>
+                    <div className='flex items-center group'>
+                      <FaPeopleGroup className={peopleIconColor} />
+                      <NavLink to='/people' className={isActiveLink}>
+                        <span className='text-xs'>People</span>
+                      </NavLink>
+                    </div>
+                    <div className='flex items-center group'>
+                      <BsFilePost className={createPostIconColor} />
+                      <NavLink to='/create_post' className={isActiveLink}>
+                      <span className='text-xs'>Create Post</span>
+                      </NavLink>
+                    </div>
+                    <div className='flex items-center group'>
+                      <FaSave className={savedIconColor} />
+                      <NavLink to='/saved' className={isActiveLink}>
+                      <span className='text-xs'>Saved</span>
+                      </NavLink>
+                    </div>
+                  </>)
+            }     
         </div>
        
     </section>

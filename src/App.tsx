@@ -10,6 +10,10 @@ import './globals.css'
 import { Routes, Route } from "react-router-dom";  
 import { Toaster } from "@/components/ui/sonner";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import EmailVerification from "./_auth/page/EmailVerification";
+import UpdateRecovery from "./_auth/page/UpdateRecovery";
+import CreateRecovery from "./_auth/page/CreateRecovery";
+import RecoveryPassword from "./_auth/page/RecoveryPassword";
 
 
 
@@ -27,6 +31,9 @@ function App() {
           <Route element={<AuthLayout />} >
             <Route path="/sign-in" element={<SigninForm />} />
             <Route path="/sign-up" element={<SignupForm />} />
+            <Route path="/verify" element={<EmailVerification />} />
+            <Route path="/create_recovery" element={<CreateRecovery />} />
+            <Route path="/update_recovery" element={<UpdateRecovery />} />
           </Route>
         
           {/* private route */}

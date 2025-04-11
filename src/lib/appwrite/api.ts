@@ -11,9 +11,9 @@ export async function  createUserAccount(user:SignupUser){
             user.password,
             user.name,
         )
-        //create the user failed
+        //create the user in auth system failed
         if(!newAccount){
-            throw new Error('Error creating account');
+            throw new Error('Error creating account in auth system');
         }
         // Generates initials-based avatar
         const avatarUrl = avatars.getInitials(user.name);
@@ -24,7 +24,8 @@ export async function  createUserAccount(user:SignupUser){
             name: newAccount.name,
             username:user.username,
             imageUrl:avatarUrl,
-        });
+        }); 
+
         return newUser;
     }catch(error){
         console.error('Error creating account:', error);
@@ -64,9 +65,16 @@ export async function signInAccount(user:{email:string,password:string}){
 
 
 export async function getCurrentUser(){
-    try{
+    try{console.log('fuck runs')
+      if(//no user logged in
+          localStorage.getItem('cookieFallback') === '[]' ||
+          localStorage.getItem('cookieFallback') === null
+      ){
+          return null
+      }else{
         //Appwrite SDK get current user from Auth system
         const user = await account.get();
+        console.log('auth user =>',user);
         const sessions = await account.listSessions();
         // console.log("Active sessions:", sessions);                  
         if(!user){
@@ -79,18 +87,20 @@ export async function getCurrentUser(){
             [Query.equal('accountId',user.$id)]// filters the documents to only those where the field accountId equals the user's unique ID (user.$id).
         )
         if(!currentUser) throw new Error('Error getting current user');
-        // console.log('currentUser =>',currentUser.documents[0]);
+        console.log('currentUser =>',currentUser);
         return currentUser.documents[0];
+      }
     }catch(error){
         console.log('Error getting current user:', error);
     }
+    
 }
 
 //sign out
 export async function signOutAccount(){
     try{
-        const session = await account.deleteSession('current');
-        return session;
+        await account.deleteSession('current');
+        return true;
     }catch(error){
         console.log('Error signing out:', error);
     }
