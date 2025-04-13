@@ -50,7 +50,7 @@ function App() {
           </Route>
         </Routes> 
         
-        <ReactQueryDevtools initialIsOpen={false} />
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       </main>
       
     

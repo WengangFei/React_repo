@@ -31,7 +31,6 @@ const AuthProvider = ({ children }:{ children: React.ReactNode }) => {
     const checkAuthUser = async () => { 
         try{
             const currentAccount = await getCurrentUser();
-            console.log('currentAccount =>',currentAccount);
             if(currentAccount){
                 setUser({
                     id:currentAccount.$id,
@@ -60,7 +59,7 @@ const AuthProvider = ({ children }:{ children: React.ReactNode }) => {
     //     checkAuthUser();
     //  },[]);
 
-    const value = {user,isLoading,isAuthenticated,setUser,setIsAuthenticated,checkAuthUser}
+    const value = { user,isLoading,isAuthenticated,setUser,setIsAuthenticated,checkAuthUser }
 
 
   return (

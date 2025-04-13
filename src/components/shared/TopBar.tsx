@@ -6,7 +6,6 @@ import { useSignOutAccount } from '@/lib/react-query/queriesAndMutations';
 import { useEffect, useState } from 'react';
 import { useUserContext } from '@/context/AuthContext';
 import { IoIosLogIn } from 'react-icons/io';
-import { set } from 'zod';
 import { toast } from 'sonner';
 
 const TopBar = () => {
@@ -17,7 +16,6 @@ const TopBar = () => {
     //redirect to login page
     useEffect(()=>{
         (async () =>{
-            console.log(await checkAuthUser());
             if(await checkAuthUser()){
                setUserLogin(true);
             }

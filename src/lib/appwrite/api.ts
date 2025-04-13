@@ -65,7 +65,7 @@ export async function signInAccount(user:{email:string,password:string}){
 
 
 export async function getCurrentUser(){
-    try{console.log('fuck runs')
+    try{
       if(//no user logged in
           localStorage.getItem('cookieFallback') === '[]' ||
           localStorage.getItem('cookieFallback') === null
@@ -74,7 +74,7 @@ export async function getCurrentUser(){
       }else{
         //Appwrite SDK get current user from Auth system
         const user = await account.get();
-        console.log('auth user =>',user);
+        // console.log('auth user =>',user);
         const sessions = await account.listSessions();
         // console.log("Active sessions:", sessions);                  
         if(!user){
@@ -87,7 +87,7 @@ export async function getCurrentUser(){
             [Query.equal('accountId',user.$id)]// filters the documents to only those where the field accountId equals the user's unique ID (user.$id).
         )
         if(!currentUser) throw new Error('Error getting current user');
-        console.log('currentUser =>',currentUser);
+        // console.log('currentUser =>',currentUser);
         return currentUser.documents[0];
       }
     }catch(error){
