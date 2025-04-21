@@ -6,11 +6,12 @@ import { useUserContext } from '@/context/AuthContext';
 import PostStats from './PostStats';
 
 
+
 const PostCard = ({ post }:{ post:Models.Document}) => {
     //retrieve user 
     const { user } = useUserContext();
     if(!post.creator) return;
-    
+ 
   return (
     <div className='post-card lg:p-8'>
       <div className='flex-between'>

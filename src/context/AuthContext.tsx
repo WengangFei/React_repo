@@ -1,6 +1,6 @@
 import { IContextType, IUser } from '@/components/shared/types';
 import { getCurrentUser } from '@/lib/appwrite/api';
-import { createContext, useContext, useEffect, useState} from 'react';
+import { createContext, useContext, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 
 //initial user information

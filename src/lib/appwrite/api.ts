@@ -1,4 +1,4 @@
-import { INewPost, IUpdatePost, SignupUser } from '../../components/shared/types';
+import { IComment, INewPost, IReply, IUpdatePost, SignupUser } from '../../components/shared/types';
 import { account, appwriteConfig, avatars, databases, storage } from './config';
 import { ID, Query } from 'appwrite';
 export async function  createUserAccount(user:SignupUser){
@@ -345,8 +345,10 @@ export async function deletePost(postId: string, imageId: string) {
 }
 //paginating posts
 export async function getInfinitePosts({ pageParam }:{ pageParam: number }) {
+  //pageParam is the "cursor" or "pointer" that tells queryFn where to continue fetching from.
   const queries : any[] = [Query.orderDesc("$createdAt"),Query.limit(20)];
   if(pageParam){
+    console.log('cursor =>',Query.cursorAfter(pageParam.toString()))
     queries.push(Query.cursorAfter(pageParam.toString()));
   }
   try {
@@ -363,8 +365,6 @@ export async function getInfinitePosts({ pageParam }:{ pageParam: number }) {
 }
 //search posts
 export async function searchPosts(searchTerm: string) {
-
-
   try{
     const posts = await databases.listDocuments(
       appwriteConfig.databaseId,
@@ -375,6 +375,73 @@ export async function searchPosts(searchTerm: string) {
     console.log('searchPosts =>',posts);
     return posts;  
   }catch(error){
+    console.log(error);
+  }
+}
+//create a comment
+export async function createComment(comment: IComment) {
+  try {
+    const response = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.commentsCollectionId,
+      ID.unique(),
+      comment
+    );
+    return response;
+  } catch (error) {
+    console.log('createComment failed.',error);
+  }
+}
+//paginating comments
+export async function getInfiniteComments({ postId,pageParam }:{ postId:string,pageParam: number }) {
+  const queries : any[] = [Query.orderDesc("$createdAt"),Query.equal("post", postId),Query.limit(5)];
+  // console.log('pageParam =>',pageParam)
+  if(pageParam){
+    queries.push(Query.cursorAfter(pageParam.toString()));
+  }
+  try {
+    const comments = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.commentsCollectionId,
+      queries
+    );
+    if (!comments) throw Error ("Error getting recent comments");
+    return comments;
+  } catch (error) {
+    console.log(error);
+  }
+}
+//write a reply to comment
+export async function writeReplyToComment(reply: IReply) {
+  // console.log('replay =>',reply);
+  try {
+    const response = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.repliesCollectionId,
+      ID.unique(),
+      reply
+    );
+    return response;
+  } catch (error) {
+    console.log('writeReplyToComment failed.',error);
+  }
+}
+//get replies
+export async function getInfiniteReplies({ commentId,pageParam }:{ commentId:string,pageParam: string }) {
+  const queries : any[] = [Query.orderDesc("$createdAt"),Query.equal("comment_id", commentId),Query.limit(5),Query.orderDesc("$createdAt"),Query.limit(3)];
+  // console.log('pageParam =>',pageParam)
+  if(pageParam){
+    queries.push(Query.cursorAfter(pageParam.toString()));
+  }
+  try {
+    const replies = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.repliesCollectionId,
+      queries
+    );
+    if (!replies) throw Error ("Error getting recent replies");
+    return replies;
+  } catch (error) {
     console.log(error);
   }
 }

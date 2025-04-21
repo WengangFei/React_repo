@@ -1,10 +1,10 @@
 
-
 .cv_body {
     max-width: 650px;
     margin:  auto;
     padding:50px;
-    font-family: monospace;
+    font-family: monospace,Arial, sans-serif !important;
+    font-size: 12px;
     background:
     linear-gradient(90deg, rgba(140, 204, 232, 0.8), rgba(227, 220, 220, 0) 70.71%),
     /* linear-gradient(180deg, rgb(198, 227, 245), rgba(242, 246, 242, 0) 70.71%), */
@@ -26,6 +26,7 @@ header {
     width:150px;
     border-radius: 50%;
 }
+
 .name_img {
     width:30px;
     border-radius: 20%;
@@ -36,15 +37,24 @@ header {
     align-items: center;
     gap:10px;
     font-size:larger;
+    margin-bottom: 10px;
 }
 article {
     font-size:x-small;
 }
-.logo_containers {
+.logo_info {
     display: flex;
     align-items: center;
     gap:5px;
     margin-bottom: 10px;
+    font-size: 10px;
+}
+.logo_links {
+    display: flex;
+    align-items: center;
+    gap:5px;
+    margin-bottom: 10px;
+    font-size: 12px;
 }
 hr {
     color: rgb(48, 180, 99);
@@ -58,6 +68,9 @@ hr {
 }
 .education_h5 {
     margin-bottom: -10px;
+}
+.work_h5 {
+    margin-top: -10px;
 }
 .skills {
     display: flex;
@@ -73,3 +86,31 @@ hr {
 .skills svg {
     margin-left: 3px;
 }
+
+.pdf-wrapper {
+    width: 210mm;         /* A4 width */
+    min-height: 297mm;    /* A4 height */
+    padding: 20mm;
+    background: white;
+    overflow: hidden;
+}
+
+@media print {
+    .cv_body {
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+  
+    .pdf-wrapper {
+      display: block !important;
+    }
+
+    body {
+        font-family: Arial, sans-serif !important;
+    }
+  
+    /* Add specific fixes for any shifting layouts here */
+  }
+  

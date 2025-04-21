@@ -1,4 +1,4 @@
-import { Link, NavLink, useLocation} from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate} from 'react-router-dom';
 import { TbSocial } from "react-icons/tb";
 import { useUserContext } from '@/context/AuthContext';
 import { Button } from '../ui/button';
@@ -25,7 +25,7 @@ const LeftSideBar = () => {
     const [login,setLogin] = useState(false);
     //get current user information
     const { mutateAsync: signOut, isPending } = useSignOutAccount();
-
+    const navigate = useNavigate();
     //handle sign out
     const handleSignOut = async () => {
         const confirmed = window.confirm("Are you sure you want to sign out?");
@@ -43,6 +43,7 @@ const LeftSideBar = () => {
                             fontWeight: 'bold',
                         },
                     });
+                    navigate('/');
                     //there is a bug here that need to refresh the page, otherwise click login button will not direct user to sign in page.
                     setTimeout(() => {
                         window.location.reload();

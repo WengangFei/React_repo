@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
-import { createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, savePost, searchPosts, signInAccount, signOutAccount, toggleLikePost, updatePost } from '../appwrite/api';
-import { INewPost, IUpdatePost, SignupUser } from '@/components/shared/types';
+import { createComment, createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfiniteComments, getInfinitePosts, getInfiniteReplies, getPostById, getRecentPosts, savePost, searchPosts, signInAccount, signOutAccount, toggleLikePost, updatePost, writeReplyToComment } from '../appwrite/api';
+import { IComment, INewPost, IReply, IUpdatePost, SignupUser } from '@/components/shared/types';
 import { QUERY_KEYS } from './queryKeys';
 
 
@@ -30,6 +30,17 @@ export const useGetPostById = (postId:string) => {
         enabled: !!postId
     })
 }
+
+//search post
+export const useSearchPosts = (searchTerm: string) => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.SEARCH_POSTS, searchTerm],
+        queryFn: () => searchPosts(searchTerm),
+        enabled: !!searchTerm 
+    })
+}
+//getting comments
+
 ///////////////////////////////////////////////////////////////////////////////////
 // useMutation function here 
 export const useCreateUserAccount = () => {
@@ -175,20 +186,68 @@ export const useGetPosts = () => {
     return useInfiniteQuery({
         queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
         queryFn: getInfinitePosts,
+        //determining how the next page of data should be fetched
         getNextPageParam: (lastPage) => {
             if(lastPage && lastPage.documents.length === 0 ) return null;
             const lastId = lastPage?.documents[lastPage.documents.length - 1]?.$id;
             return lastId
+        },
+    })
+}
+//create comment
+export const useCreateComment = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (comment: IComment) => createComment(comment),
+        // React Query passes the variables mutated with as the second argument to onSuccess
+        onSuccess: (data,comment) => {
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_COMMENTS, comment.post],
+            });
+            
+        },
+    });
+}
+//fetching comments for each post
+export const useGetComments = (postId:string) =>{
+    //{pages: Array(3), pageParams: Array(3)}
+    // pageParams: (3) [undefined, '67fe5324003af693f96a', '67fe0e8d00187f9a1d95']
+    // pages: (3) [{…}, {…}, {…}]
+    return useInfiniteQuery({
+        queryKey: [QUERY_KEYS.GET_COMMENTS, postId],
+        queryFn: ({ pageParam }:{ pageParam: number }) => getInfiniteComments({postId,pageParam}),
+        getNextPageParam: (lastPage) => {
+            // console.log('lastPage =>',lastPage)
+            if (lastPage && lastPage.documents.length === 0) return null;
+            const lastId = lastPage?.documents[lastPage.documents.length - 1]?.$id;
+            return lastId;
+        },
+        enabled: !!postId,
+    })
+}
+//write reply to comment
+export const useWriteReply = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (reply: IReply) => writeReplyToComment(reply),
+        onSuccess: (_,reply) => {  
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_REPLIES,reply.comment_id],  
+            })
         }
     })
 }
-//search post
-export const useSearchPosts = (searchTerm: string) => {
-    return useQuery({
-        queryKey: [QUERY_KEYS.SEARCH_POSTS, searchTerm],
-        queryFn: () => searchPosts(searchTerm),
-        enabled: !!searchTerm 
+//fetch replies
+export const useGetReplies = (commentId:string) => {
+    return useInfiniteQuery({
+        queryKey: [QUERY_KEYS.GET_REPLIES, commentId],
+        queryFn: ({ pageParam }:{ pageParam: number }) => getInfiniteReplies({commentId,pageParam}),
+        getNextPageParam: (lastPage) => {
+            if (lastPage && lastPage.documents.length === 0) return null;
+            const lastId = lastPage?.documents[lastPage.documents.length - 1]?.$id;
+            return lastId;
+        },
+        enabled: !!commentId,
     })
 }
-
 

@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 // 67fb1427002916ea925b database userid
 // 67fb1425716b09c2c84f auth
 const PostStats = ({ post, userId }:{ post?:Models.Document, userId:string}) => {
+    // console.log('post =>',post);
     //check user log in
     const { isAuthenticated, user } = useUserContext();
     const savedPostId = post?.save.find(savedUser => savedUser?.user.$id === user?.id)?.$id;
@@ -53,13 +54,15 @@ const PostStats = ({ post, userId }:{ post?:Models.Document, userId:string}) => 
         setSaves(savesArray);
     };
 
-    const isAbleToClickButtons = (flag: boolean, content: string, category?: string) => {
+    const isAbleToClickButtons = (flag: boolean, content: string, category: string) => {
         if (flag) {
             let tooltipText = '';
             if (category === 'like') {
                 tooltipText = likes.includes(userId) ? 'Unliked' : 'Like';
             } else if (category === 'save') {
                 tooltipText = saves.includes(userId) ? 'Unsaved' : 'Save';
+            }else if (category === 'comment') {
+                tooltipText = 'Comment';
             }
     
             return (
@@ -101,8 +104,8 @@ const PostStats = ({ post, userId }:{ post?:Models.Document, userId:string}) => 
         {/* comments */}
         <Link to={ isAuthenticated ? `/post/${post?.$id}` : '#'} className='ml-auto mt-5 mr-5 group relative flex gap-2'>
             <TiMessages className='text-purple-500 hover:text-light-1 cursor-pointer'/> 
-            {isAbleToClickButtons(isAuthenticated,'login to com.')}
-            <p className='small-medium lg:base-medium'>{ likes.length }</p> 
+            {isAbleToClickButtons(isAuthenticated,'login to com.','comment')}
+            <p className='small-medium lg:base-medium'>{ post?.comments.length }</p> 
         </Link>
         {/* save button */}
         <button className='relative flex gap-2 mt-5 group' onClick={handleSavePost} disabled={!isAuthenticated}>

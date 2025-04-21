@@ -70,11 +70,7 @@ const SignupForm = () => {
 
 
     //is authenticated, send an email to user's email
-    account.createVerification(import.meta.env.VITE_APPWRITE_EMAIL_VERIFICATION_URL).then((response) => {
-        console.log('Verification email sent to: ',response);
-        }).catch((error) => {
-        console.error('Error sending verification email:', error);
-    });
+    await account.createVerification(import.meta.env.VITE_APPWRITE_EMAIL_VERIFICATION_URL);
 
 
 

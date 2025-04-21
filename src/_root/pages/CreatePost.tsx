@@ -1,5 +1,4 @@
 import PostForm from '@/components/forms/PostForm';
-import React from 'react';
 import { RiImageAddFill } from "react-icons/ri";
 
 const CreatePost = () => {

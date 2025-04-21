@@ -13,7 +13,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import EmailVerification from "./_auth/page/EmailVerification";
 import UpdateRecovery from "./_auth/page/UpdateRecovery";
 import CreateRecovery from "./_auth/page/CreateRecovery";
-import RecoveryPassword from "./_auth/page/RecoveryPassword";
+
 
 
 
@@ -50,7 +50,7 @@ function App() {
           </Route>
         </Routes> 
         
-        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+        <ReactQueryDevtools initialIsOpen={false} />
       </main>
       
     

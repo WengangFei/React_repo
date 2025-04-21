@@ -28,6 +28,7 @@ import Loader from "../shared/Loader"
 
 
 const PostForm = ({ post, actions }: PostFormProps) => {
+  console.log('actions =>',actions);
     // 1. Define your form.
   const form = useForm<z.infer<typeof postFormSchema>>({
     resolver: zodResolver(postFormSchema),
@@ -139,9 +140,9 @@ const PostForm = ({ post, actions }: PostFormProps) => {
             <Button type="submit" className="shad-button_primary whitespace-nowrap" disabled={isPending || isUpdatePending}>
               {
                 isPending || isUpdatePending ? (
-                  <Loader content="Loading..."/>
+                  <Loader content={`${actions === 'update' ? 'Updating......' : 'Posting......'}`}/>
                 ) : (
-                  actions === 'create' ? 'Post' : 'Update'
+                  actions === 'update' ? 'Update' : 'Post'
                 )
               }
             </Button>

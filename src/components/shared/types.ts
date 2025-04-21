@@ -58,3 +58,15 @@ export type INewPost = {
     imageUrl?: string;
     imageId?: string;
   }
+
+  export type IComment = {
+    content: string;
+    post: string;
+    creator: string;
+  }
+
+  export type IReply = {
+    content: string;
+    comment_id: string;
+    writer_id: string;
+  }

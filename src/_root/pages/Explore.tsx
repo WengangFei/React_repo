@@ -15,13 +15,12 @@ const Explore = () => {
   const debouncedValue = useDebounce(searchValue, 1000);
   const { data:posts,fetchNextPage,hasNextPage } = useGetPosts();
   const { data:searchedPosts, isFetching:isSearchFetching } = useSearchPosts(debouncedValue);
-  console.log('searchedPosts =>',useGetPosts());
+console.log('searchedPosts =>',posts)
   //use inview
   const { ref, inView } = useInView();
   useEffect(() => {
     if(inView && !searchValue){
       fetchNextPage();
-      
     }
   },[inView,searchValue]);
   if(!posts){
