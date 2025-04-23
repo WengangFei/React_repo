@@ -2,6 +2,7 @@ import { IContextType, IUser } from '@/components/shared/types';
 import { getCurrentUser } from '@/lib/appwrite/api';
 import { createContext, useContext, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import { set } from 'zod';
 
 //initial user information
 export const INITIAL_USER = {
@@ -15,6 +16,7 @@ export const INITIAL_USER = {
 //initial state
 const INITIAL_STATE = {
     user:INITIAL_USER,
+    loginUser:{},
     isLoading:false,
     isAuthenticated: false,
     setUser: () => {},
@@ -27,6 +29,7 @@ const AuthProvider = ({ children }:{ children: React.ReactNode }) => {
     const [user,setUser] = useState<IUser>(INITIAL_USER);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [loginUser, setLoginUser] = useState({});
 
     const checkAuthUser = async () => { 
         try{
@@ -40,6 +43,7 @@ const AuthProvider = ({ children }:{ children: React.ReactNode }) => {
                     imageUrl:currentAccount.imageUrl,
                     bio:currentAccount.bio,
                 });
+                setLoginUser(currentAccount);
                 setIsAuthenticated(true);
                 return true;
             }
@@ -50,6 +54,7 @@ const AuthProvider = ({ children }:{ children: React.ReactNode }) => {
             setIsLoading(false);
         }
     };
+
     //if user not authenticated
     //  useEffect(() => {
     //     if(
@@ -59,7 +64,7 @@ const AuthProvider = ({ children }:{ children: React.ReactNode }) => {
     //     checkAuthUser();
     //  },[]);
 
-    const value = { user,isLoading,isAuthenticated,setUser,setIsAuthenticated,checkAuthUser }
+    const value = { user,loginUser,isLoading,isAuthenticated,setUser,setIsAuthenticated,checkAuthUser }
 
 
   return (
