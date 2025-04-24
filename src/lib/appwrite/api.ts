@@ -445,3 +445,16 @@ export async function getInfiniteReplies({ commentId,pageParam }:{ commentId:str
     console.log(error);
   }
 }
+//get all users
+export async function getAllUsers() {
+  try {
+    const users = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.usersCollectionId
+    );
+    if (!users) throw Error ("Error getting users");
+    return users;
+  } catch (error) {
+    console.log(error);
+  }
+}

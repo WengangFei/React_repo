@@ -1,8 +1,7 @@
 import { IContextType, IUser } from '@/components/shared/types';
 import { getCurrentUser } from '@/lib/appwrite/api';
 import { createContext, useContext, useState} from 'react';
-import { useNavigate } from 'react-router-dom';
-import { set } from 'zod';
+
 
 //initial user information
 export const INITIAL_USER = {
@@ -25,15 +24,17 @@ const INITIAL_STATE = {
 };
 //create a context
 const AuthContext = createContext<IContextType>(INITIAL_STATE);
+
 const AuthProvider = ({ children }:{ children: React.ReactNode }) => {
     const [user,setUser] = useState<IUser>(INITIAL_USER);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [loginUser, setLoginUser] = useState({});
-
+  
     const checkAuthUser = async () => { 
         try{
             const currentAccount = await getCurrentUser();
+
             if(currentAccount){
                 setUser({
                     id:currentAccount.$id,

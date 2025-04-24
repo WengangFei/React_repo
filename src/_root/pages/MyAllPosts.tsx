@@ -13,9 +13,7 @@ const MyAllPosts = ({ posts }: { posts: Models.Document[]}) => {
         {
             posts?.reverse()?.map((post:Models.Document) => (
                 <div key={post.$id}>
-                    <Link to={`/post/${post.$id}`} >
-                        <PostsThumbnail key={post.$id} post={post} />
-                    </Link>
+                    <PostsThumbnail key={post.$id} post={post} />
                 </div>
                
                 

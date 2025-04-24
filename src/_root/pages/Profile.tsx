@@ -9,7 +9,7 @@ const Profile = () => {
   const { loginUser:user } = useUserContext();
   console.log("user =>",user)
   return (
-    <div className='flex justify-center lg:mt-32'>
+    <div className='flex justify-center lg:mt-10'>
       <div className='w-[300px]'>
         <ProfileHead user={user}/>
       </div>

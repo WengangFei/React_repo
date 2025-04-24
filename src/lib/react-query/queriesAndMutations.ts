@@ -1,7 +1,8 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
-import { createComment, createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfiniteComments, getInfinitePosts, getInfiniteReplies, getPostById, getRecentPosts, savePost, searchPosts, signInAccount, signOutAccount, toggleLikePost, updatePost, writeReplyToComment } from '../appwrite/api';
+import { createComment, createPost, createUserAccount, deletePost, deleteSavedPost, getAllUsers, getCurrentUser, getInfiniteComments, getInfinitePosts, getInfiniteReplies, getPostById, getRecentPosts, savePost, searchPosts, signInAccount, signOutAccount, toggleLikePost, updatePost, writeReplyToComment } from '../appwrite/api';
 import { IComment, INewPost, IReply, IUpdatePost, SignupUser } from '@/components/shared/types';
 import { QUERY_KEYS } from './queryKeys';
+import { get } from 'http';
 
 
 
@@ -39,8 +40,13 @@ export const useSearchPosts = (searchTerm: string) => {
         enabled: !!searchTerm 
     })
 }
-//getting comments
-
+//get all users
+export const useGetAllUsers = () => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_ALL_USERS],
+        queryFn: getAllUsers,
+    })
+}
 ///////////////////////////////////////////////////////////////////////////////////
 // useMutation function here 
 export const useCreateUserAccount = () => {

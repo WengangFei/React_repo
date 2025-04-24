@@ -40,7 +40,7 @@ const ProfileHead = ({ user }) => {
 
   return (
     <div>
-        <div className='p-6 lg:p-12'>
+        <div className='p-6'>
         {/* These props enable the drag-and-drop behavior */}
             <div {...getRootProps()} className='flex flex-center flex-col bg-dark-3 rounded-xl cursor-pointer p-8 w-40 h-40 mb-6'>
                 {/* it is invisible by default, but allows users to select files via the file dialog when clicked (as an alternative to drag-and-drop). */}
@@ -120,9 +120,9 @@ const ProfileHead = ({ user }) => {
             </div>
             
             <div className='flex flex-col'>
-                <p className='subtle-semibold lg:small-regular'>User Name: { user.username || 'Username' }</p> 
-                <p className='subtle-semibold lg:small-regular'>Email: { user.email || 'Email' }</p>
-                <p className='subtle-semibold lg:small-regular'>Member Since: { formatDate(user.$createdAt) || 'Member Since' }</p>
+                <p className='subtle-semibold lg:small-regular'>{ user.username || 'Username' }</p> 
+                <p className='subtle-semibold lg:small-regular'>{ user.email || 'Email' }</p>
+                <p className='subtle-semibold lg:small-regular'>Member Since<br /> { formatDate(user.$createdAt) || 'Member Since' }</p>
                 
             </div>
         </div>
